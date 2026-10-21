@@ -37,13 +37,24 @@ app.get('/api/health', (req, res) => {
 });
 
 // API Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/subjects', require('./routes/subjectRoutes'));
-app.use('/api/attendance', require('./routes/attendanceRoutes'));
-app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+const authRoutes = require('./routes/authRoutes');
+const subjectRoutes = require('./routes/subjectRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
-// 404 handler for unknown API routes
-app.use('/api/*', (req, res) => {
+app.use('/api/auth', authRoutes);
+app.use('/api/subjects', subjectRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
+// Fallback aliases for requests made without the '/api' prefix
+app.use('/auth', authRoutes);
+app.use('/subjects', subjectRoutes);
+app.use('/attendance', attendanceRoutes);
+app.use('/dashboard', dashboardRoutes);
+
+// 404 handler for unknown routes (returns JSON so clients never receive raw HTML)
+app.use((req, res) => {
   res.status(404).json({ message: `API endpoint '${req.originalUrl}' not found` });
 });
 
